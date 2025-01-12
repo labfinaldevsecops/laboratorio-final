@@ -50,7 +50,7 @@ jobs:
           id: Depcheck
           with: 
             project: '${{ github.event.repository.name }}'
-            path: '.'
+            path: './'
             format: 'JSON'
             output_directory: './dependency-check-reports'
             args: >
