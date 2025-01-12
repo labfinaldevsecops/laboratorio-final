@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   
 jobs:
-  Analysis:
+  SAST:
     runs-on: ubuntu-latest
 
     steps:
