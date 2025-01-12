@@ -6,7 +6,7 @@ on:
   
 jobs:
   SAST:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v4
@@ -52,11 +52,31 @@ jobs:
             project: '${{ github.event.repository.name }}'
             path: '.'
             format: 'HTML'
-            fail_on_cvss: '5.0' #falla para vulnerabilidades medias o mayores
             args: >
               --out ./reports
               --failOnCVSS 5
               --enableRetired
+            
+        - name: Check for Vulnerabilities
+          run: |
+            # Busca el archivo JSON generado por Dependency Check
+            if [ -f dependency-check-report.json ]; then
+              CRITICAL=$(jq '[.dependencies[].vulnerabilities[] | select(.severity == "CRITICAL")] | length' dependency-check-report.json)
+              HIGH=$(jq '[.dependencies[].vulnerabilities[] | select(.severity == "HIGH")] | length' dependency-check-report.json)
+              MEDIUM=$(jq '[.dependencies[].vulnerabilities[] | select(.severity == "MEDIUM")] | length' dependency-check-report.json)
+
+              echo "Critical vulnerabilities: $CRITICAL"
+              echo "High vulnerabilities: $HIGH"
+              echo "Medium vulnerabilities: $MEDIUM"
+
+              if [ "$CRITICAL" -gt 0 ] || [ "$HIGH" -gt 0 ] || [ "$MEDIUM" -gt 0 ]; then
+                echo "Failing build due to vulnerabilities!"
+                exit 1
+              fi
+            else
+              echo "dependency-check-report.json not found!"
+              exit 1
+            fi      
               
         - name: Upload Test Result
           uses: actions/upload-artifact@master
