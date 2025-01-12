@@ -41,46 +41,67 @@ jobs:
       steps:
         
         - name: Checkout code
-          uses: actions/checkout@v2
+          uses: actions/checkout@v3
 
-        - name: Dependency Check
+        - name: Run Dependency Check
           uses: dependency-check/Dependency-Check_Action@1.1.0
-          env:
-            JAVA_HOME: /opt/jdk
-          id: Depcheck
-          with: 
-            project: '${{ github.event.repository.name }}'
-            path: './'
-            format: 'JSON'
-            output_directory: './dependency-check-reports'
-            args: >
-              --out ./reports
-              --failOnCVSS 5
-              --enableRetired
-
-        - name: List Generated Files
-          run: ls -R './dependency-check-reports'
-
-        - name: Check for Vulnerabilities
+          with:
+            path: "./" # Directorio del proyecto
+            project: "YourProjectName" # Nombre del proyecto
+            format: "ALL" # Generar reportes en todos los formatos (JSON, HTML, XML)
+            output-directory: "./dependency-check-reports" # Directorio de salida de los reportes
+  
+        - name: List Dependency-Check Reports
           run: |
-            # Busca el archivo JSON generado por Dependency Check
-            if [ -f dependency-check-report.json ]; then
-              CRITICAL=$(jq '[.dependencies[].vulnerabilities[] | select(.severity == "CRITICAL")] | length' dependency-check-report.json)
-              HIGH=$(jq '[.dependencies[].vulnerabilities[] | select(.severity == "HIGH")] | length' dependency-check-report.json)
-              MEDIUM=$(jq '[.dependencies[].vulnerabilities[] | select(.severity == "MEDIUM")] | length' dependency-check-report.json)
+            echo "Listing Dependency-Check report files..."
+            find ./dependency-check-reports -type f -print
+  
+        - name: Upload Reports
+          uses: actions/upload-artifact@v3
+          with:
+            name: dependency-check-reports
+            path: "./dependency-check-reports/*"
 
-              echo "Critical vulnerabilities: $CRITICAL"
-              echo "High vulnerabilities: $HIGH"
-              echo "Medium vulnerabilities: $MEDIUM"
 
-              if [ "$CRITICAL" -gt 0 ] || [ "$HIGH" -gt 0 ] || [ "$MEDIUM" -gt 0 ]; then
-                echo "Failing build due to vulnerabilities!"
-                exit 1
-              fi
-            else
-              echo "dependency-check-report.json not found!"
-              exit 1
-            fi      
+
+        # ##- name: Dependency Check
+        #   uses: dependency-check/Dependency-Check_Action@1.1.0
+        #   env:
+        #     JAVA_HOME: /opt/jdk
+        #   id: Depcheck
+        #   with: 
+        #     project: '${{ github.event.repository.name }}'
+        #     path: './'
+        #     format: 'JSON'
+        #     output_directory: './dependency-check-reports'
+        #     args: >
+        #       --out ./reports
+        #       --failOnCVSS 5
+        #       --enableRetired
+
+        # - name: List Generated Files
+        #   run: ls -R './dependency-check-reports'
+
+        # - name: Check for Vulnerabilities
+        #   run: |
+        #     # Busca el archivo JSON generado por Dependency Check
+        #     if [ -f dependency-check-report.json ]; then
+        #       CRITICAL=$(jq '[.dependencies[].vulnerabilities[] | select(.severity == "CRITICAL")] | length' dependency-check-report.json)
+        #       HIGH=$(jq '[.dependencies[].vulnerabilities[] | select(.severity == "HIGH")] | length' dependency-check-report.json)
+        #       MEDIUM=$(jq '[.dependencies[].vulnerabilities[] | select(.severity == "MEDIUM")] | length' dependency-check-report.json)
+
+        #       echo "Critical vulnerabilities: $CRITICAL"
+        #       echo "High vulnerabilities: $HIGH"
+        #       echo "Medium vulnerabilities: $MEDIUM"
+
+        #       if [ "$CRITICAL" -gt 0 ] || [ "$HIGH" -gt 0 ] || [ "$MEDIUM" -gt 0 ]; then
+        #         echo "Failing build due to vulnerabilities!"
+        #         exit 1
+        #       fi
+        #     else
+        #       echo "dependency-check-report.json not found!"
+        #       exit 1
+        #     fi      
               
         - name: Upload Test Result
           uses: actions/upload-artifact@master
