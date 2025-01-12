@@ -54,7 +54,7 @@ jobs:
             format: 'HTML'
             args: >
               --out ./reports
-              --failOnCVSS: '5.0'
+            failOnCVSS: '5.0'
               --enableRetired
               
         - name: Upload Test Result
