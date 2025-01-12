@@ -52,7 +52,6 @@ jobs:
             project: '${{ github.event.repository.name }}'
             path: '.'
             format: 'HTML'
-            fail_on_cvss: '5.0' #falla para vulnerabilidades medias o mayores
             args: >
               --out ./reports
               --failOnCVSS: '5.0'
