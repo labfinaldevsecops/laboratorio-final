@@ -57,4 +57,8 @@ jobs:
               --failOnCVSS 7
               --enableRetired
               
-      
+        - name: Upload Test Result
+          uses: actions/upload-artifact@master
+          with: 
+            name: Depcheck Report
+            path: ./reports
