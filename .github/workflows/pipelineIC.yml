@@ -56,7 +56,10 @@ jobs:
               --out ./reports
               --failOnCVSS 5
               --enableRetired
-            
+
+        - name: List Generated Files
+          run: ls -R './dependency-check-reports'
+
         - name: Check for Vulnerabilities
           run: |
             # Busca el archivo JSON generado por Dependency Check
