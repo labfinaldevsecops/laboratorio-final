@@ -106,7 +106,26 @@ jobs:
     #  with:
     #    image-ref: 'nachoandres/labfinaldevsecops-test:latest'
     #    format: 'table'
+    - name: Check out Git repository
+      uses: actions/checkout@v4
 
+    # The first call to the action will invoke setup-trivy and install trivy
+    - name: Generate Trivy Vulnerability Report
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: "fs"
+        output: trivy-report.json
+        format: json
+        scan-ref: .
+        exit-code: 0
+
+    - name: Upload Vulnerability Scan Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy-report
+        path: trivy-report.json
+        retention-days: 30
+        
     - name: Fail build on Medium/High/Criticial Vulnerabilities
       uses: aquasecurity/trivy-action@master
       with:
