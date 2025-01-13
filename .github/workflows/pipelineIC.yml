@@ -110,8 +110,9 @@ jobs:
     - name: Fail build on Medium/High/Criticial Vulnerabilities
       uses: aquasecurity/trivy-action@master
       with:
+        image-ref: 'nachoandres/labfinaldevsecops-test:latest'
         scan-type: "fs"
-        format: table
+        format: 'table'
         scan-ref: .
         severity: MEDIUM,HIGH,CRITICAL
         ignore-unfixed: true
