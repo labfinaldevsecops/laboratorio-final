@@ -75,7 +75,14 @@ jobs:
         username: ${{ secrets.DOCKER_USER }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-  
+    - name: Docker Build 
+      run: |
+        docker build --tag nachoandres/labfinaldevsecops-test:latest .
+
+    - name: Push Docker 
+      run: |
+        docker push nachoandres/labfinaldevsecops-test:latest
+
 
 
 
