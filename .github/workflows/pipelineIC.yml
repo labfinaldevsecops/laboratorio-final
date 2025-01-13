@@ -99,7 +99,7 @@ DockerScan:
 
   - name: Pull Docker 
     run: |
-    docker pull nachoandres/labfinaldevsecops-test:latest 
+      docker pull nachoandres/labfinaldevsecops-test:latest 
 
   - name: Run Trivy Scan 
     uses: aquasecurity/trivy-action@master
