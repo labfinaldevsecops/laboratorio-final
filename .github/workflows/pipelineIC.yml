@@ -101,12 +101,23 @@ jobs:
       run: |
         docker pull nachoandres/labfinaldevsecops-test:latest 
 
-    - name: Run Trivy Scan 
+   # - name: Run Trivy Scan 
+   #   uses: aquasecurity/trivy-action@master
+    #  with:
+    #    image-ref: 'nachoandres/labfinaldevsecops-test:latest'
+    #    format: 'table'
+
+    - name: Fail build on Medium/High/Criticial Vulnerabilities
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: 'nachoandres/labfinaldevsecops-test:latest'
-        format: 'table'
-
+        scan-type: "fs"
+        format: table
+        scan-ref: .
+        severity: MEDIUM,HIGH,CRITICAL
+        ignore-unfixed: true
+        exit-code: 1
+        # On a subsequent call to the action we know trivy is already installed so can skip this
+        skip-setup-trivy: true
 
 
 
